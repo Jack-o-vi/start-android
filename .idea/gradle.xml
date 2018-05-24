@@ -10,6 +10,8 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/contextmenu" />
+            <option value="$PROJECT_DIR$/module03_layoutparams" />
+            <option value="$PROJECT_DIR$/module04_customview" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

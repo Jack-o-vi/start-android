@@ -1,1 +1,1 @@
-include ':app', ':contextmenu'
+include ':app', ':contextmenu', ':module03_layoutparams', ':module04_customview'
