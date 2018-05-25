@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">module06_onActivityResult</string>
+    <string name="title_activity_color">ColorActivity</string>
+    <string name="appbar_scrolling_view_behavior" />
+</resources>

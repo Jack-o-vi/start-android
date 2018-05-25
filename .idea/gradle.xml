@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/module03_layoutparams" />
             <option value="$PROJECT_DIR$/module04_customview" />
             <option value="$PROJECT_DIR$/module05_SeekBar" />
+            <option value="$PROJECT_DIR$/module06_onactivityresult" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
