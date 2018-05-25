@@ -1,1 +1,1 @@
-include ':app', ':contextmenu', ':module03_layoutparams', ':module04_customview', ':module05_SeekBar', ':module06_onactivityresult'
+include ':app', ':contextmenu', ':module03_layoutparams', ':module04_customview', ':module05_SeekBar', ':module06_onactivityresult', ':module07_browser', ':module08_1_sharedpreferences', ':module08_2_sqlite'
