@@ -17,6 +17,7 @@
             <option value="$PROJECT_DIR$/module07_browser" />
             <option value="$PROJECT_DIR$/module08_1_sharedpreferences" />
             <option value="$PROJECT_DIR$/module08_2_sqlite" />
+            <option value="$PROJECT_DIR$/module09_layoutinflaterlist" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
