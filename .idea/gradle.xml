@@ -18,6 +18,9 @@
             <option value="$PROJECT_DIR$/module08_1_sharedpreferences" />
             <option value="$PROJECT_DIR$/module08_2_sqlite" />
             <option value="$PROJECT_DIR$/module09_layoutinflaterlist" />
+            <option value="$PROJECT_DIR$/module10_listview" />
+            <option value="$PROJECT_DIR$/module11_networkoperations" />
+            <option value="$PROJECT_DIR$/module12_newsxmlparse" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
