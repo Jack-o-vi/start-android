@@ -21,6 +21,7 @@
             <option value="$PROJECT_DIR$/module10_listview" />
             <option value="$PROJECT_DIR$/module11_networkoperations" />
             <option value="$PROJECT_DIR$/module12_newsxmlparse" />
+            <option value="$PROJECT_DIR$/modulealpha_androidapi24" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

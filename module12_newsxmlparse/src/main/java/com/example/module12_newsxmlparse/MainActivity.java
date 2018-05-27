@@ -2,7 +2,7 @@ package com.example.module12_newsxmlparse;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,7 +27,7 @@ import java.util.List;
  * @author Bjorn
  */
 public class MainActivity extends AppCompatActivity {
-
+    public static final String TAG = "MyLOGS";
     // XML feed URL
     public final String mNewsFeed = "http://www.wsj.com/xml/rss/3_7455.xml";
     // Reference to container layout
@@ -74,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         protected List<SimpleXMLParser.NewsItem> doInBackground(String... params) {
 
             List<SimpleXMLParser.NewsItem> items;
-            InputStream xmlStream = null;
+            InputStream xmlStream;
             String url = params[0];
 
             xmlStream = downloadXML(url);
@@ -86,19 +88,27 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute( List<SimpleXMLParser.NewsItem> items){
+        protected void onPostExecute(List<SimpleXMLParser.NewsItem> items) {
 
             LayoutInflater inflater = LayoutInflater.from(getBaseContext());
             mContainerLayout.removeAllViews();
-            for(SimpleXMLParser.NewsItem item : items){
+            int[] colors = {Color.parseColor("#00a9ff" ), Color.parseColor("#e3e9ed" )};
+            for (SimpleXMLParser.NewsItem item : items) {
 
-                LinearLayout linearLayout = (LinearLayout) inflater.inflate(R.layout.news_item, null, false);
+                LinearLayout linearLayout = (LinearLayout) inflater.inflate(R.layout.news_item, mContainerLayout, false);
 
-                TextView heading = findViewById(R.id.heading);
-                TextView description = findViewById(R.id.description);
+                TextView tvHeading = (TextView) linearLayout.findViewById(R.id.heading);
+                TextView tvDescription = (TextView) linearLayout.findViewById(R.id.description);
 
-                heading.setText(item.title);
-                description.setText(item.description);
+                tvHeading.setBackgroundColor(colors[0]);
+                tvDescription.setBackgroundColor(colors[1]);
+                if (tvHeading != null && tvDescription != null) {
+                    tvHeading.setText(item.title);
+                    tvDescription.setText(item.description);
+                } else {
+                    Log.e(TAG, "tvHeading " + (tvHeading == null) + " title: " + item.title);
+                    Log.e(TAG, "tvDescription " + (tvDescription == null) + " description: " + item.description);
+                }
 
                 mContainerLayout.addView(linearLayout);
             }
