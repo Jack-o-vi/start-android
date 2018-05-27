@@ -1,19 +1,23 @@
 package com.example.module12_newsxmlparse;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     public final String mNewsFeed = "http://www.wsj.com/xml/rss/3_7455.xml";
     // Reference to container layout
     public LinearLayout mContainerLayout;
+    public String sPreferredNetwork;
     // Connectivity Manager instance
     private ConnectivityManager connectivityManager;
 
@@ -51,13 +56,33 @@ public class MainActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
 
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        if (networkInfo != null && networkInfo.isConnected()) {
-            loadNewsPage();
-        } else {
-            loadDefaultMessage();
+        sPreferredNetwork = preferences.getString("chosenNetworkType", "Any");
+        loadNewsPage();
+//        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+//
+//        if (networkInfo != null && networkInfo.isConnected()) {
+//            loadNewsPage();
+//        } else {
+//            loadDefaultMessage();
+//        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        if (menuItem.getItemId() == R.id.action_settings) {
+            Intent settingIntent = new Intent(getBaseContext(), SettingsActivity.class);
+            startActivity(settingIntent);
+            return true;
         }
+        return super.onOptionsItemSelected(menuItem);
     }
 
     private void loadDefaultMessage() {
@@ -68,7 +93,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadNewsPage() {
-        new DownloadNewsTask().execute(mNewsFeed);
+
+        boolean isWifiAvailable = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected();
+
+        if (sPreferredNetwork.equals("Any")) {
+            if (connectivityManager != null) {
+                NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
+                if (networkInfo != null && networkInfo.isConnected()) {
+                    new DownloadNewsTask().execute(mNewsFeed);
+                } else {
+                    Toast.makeText(this, "Network Not available", Toast.LENGTH_SHORT).show();
+                }
+            }
+        } else if (sPreferredNetwork.equals("Wifi")) {
+            if (isWifiAvailable) {
+                new DownloadNewsTask().execute(mNewsFeed);
+            } else {
+                Toast.makeText(this, "Data allowed only on WiFi network", Toast.LENGTH_SHORT).show();
+            }
+
+        } else {
+            Toast.makeText(this, "Data disabled by user!", Toast.LENGTH_SHORT).show();
+            loadDefaultMessage();
+        }
+
+       // new DownloadNewsTask().execute(mNewsFeed);
     }
 
     private class DownloadNewsTask extends AsyncTask<String, Void, List<SimpleXMLParser.NewsItem>> {
@@ -92,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
 
             LayoutInflater inflater = LayoutInflater.from(getBaseContext());
             mContainerLayout.removeAllViews();
-            int[] colors = {Color.parseColor("#00a9ff" ), Color.parseColor("#e3e9ed" )};
+            int[] colors = {Color.parseColor("#00a9ff"), Color.parseColor("#e3e9ed")};
             for (SimpleXMLParser.NewsItem item : items) {
 
                 LinearLayout linearLayout = (LinearLayout) inflater.inflate(R.layout.news_item, mContainerLayout, false);

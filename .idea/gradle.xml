@@ -21,6 +21,12 @@
             <option value="$PROJECT_DIR$/module10_listview" />
             <option value="$PROJECT_DIR$/module11_networkoperations" />
             <option value="$PROJECT_DIR$/module12_newsxmlparse" />
+            <option value="$PROJECT_DIR$/module12_singlemultiplelistview" />
+            <option value="$PROJECT_DIR$/module13_listviewlisteners" />
+            <option value="$PROJECT_DIR$/module14_expandablelistview" />
+            <option value="$PROJECT_DIR$/module15_expandablelistviewlistener" />
+            <option value="$PROJECT_DIR$/module16_simpleadapter" />
+            <option value="$PROJECT_DIR$/module17_smpleadapter_v2.0" />
             <option value="$PROJECT_DIR$/modulealpha_androidapi24" />
           </set>
         </option>
