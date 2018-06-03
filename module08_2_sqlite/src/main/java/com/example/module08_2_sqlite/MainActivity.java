@@ -1,135 +1,136 @@
 package com.example.module08_2_sqlite;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.support.v7.app.AppCompatActivity;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+import com.example.module08_2_sqlite.database.BeanDAO.BeanDAO;
+import com.example.module08_2_sqlite.database.DBHelper;
+import com.example.module08_2_sqlite.database.bean.Bean;
+
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
 
     final String LOG_TAG = "myLogs";
 
-    Button btnAdd, btnRead, btnClear;
-    EditText etName, etEmail;
+    Button btnAdd, btnRead, btnClear, btnUpd, btnDel;
+    EditText etName, etEmail, etID;
 
     DBHelper dbHelper;
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        btnAdd = (Button) findViewById(R.id.btnAdd);
+        btnAdd = findViewById(R.id.btnAdd);
         btnAdd.setOnClickListener(this);
 
-        btnRead = (Button) findViewById(R.id.btnRead);
+        btnRead = findViewById(R.id.btnRead);
         btnRead.setOnClickListener(this);
 
-        btnClear = (Button) findViewById(R.id.btnClear);
+        btnClear = findViewById(R.id.btnClear);
         btnClear.setOnClickListener(this);
 
-        etName = (EditText) findViewById(R.id.etName);
-        etEmail = (EditText) findViewById(R.id.etEmail);
+        etName = findViewById(R.id.etName);
+        etEmail = findViewById(R.id.etEmail);
+
+        btnUpd =  findViewById(R.id.btnUpd);
+        btnUpd.setOnClickListener(this);
+
+        btnDel = findViewById(R.id.btnDel);
+        btnDel.setOnClickListener(this);
+
+        etName = findViewById(R.id.etName);
+        etEmail = findViewById(R.id.etEmail);
+        etID = (EditText) findViewById(R.id.etID);
+
 
         // создаем объект для создания и управления версиями БД
         dbHelper = new DBHelper(this);
     }
 
-
     @Override
     public void onClick(View v) {
-
-        // создаем объект для данных
-        ContentValues cv = new ContentValues();
 
         // получаем данные из полей ввода
         String name = etName.getText().toString();
         String email = etEmail.getText().toString();
-
-        // подключаемся к БД
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
+        String id = etID.getText().toString();
+        BeanDAO beanDAO = new BeanDAO(this);
 
         switch (v.getId()) {
             case R.id.btnAdd:
                 Log.d(LOG_TAG, "--- Insert in mytable: ---");
-                // подготовим данные для вставки в виде пар: наименование столбца - значение
-
-                cv.put("name", name);
-                cv.put("email", email);
-                // вставляем запись и получаем ее ID
-                long rowID = db.insert("mytable", null, cv);
-                Log.d(LOG_TAG, "row inserted, ID = " + rowID);
+                Bean bean = new Bean(name, email);
+                bean = beanDAO.save(bean);
+                Log.d(LOG_TAG, "row inserted, ID = " + bean.getId());
                 break;
             case R.id.btnRead:
                 Log.d(LOG_TAG, "--- Rows in mytable: ---");
                 // делаем запрос всех данных из таблицы mytable, получаем Cursor
-                Cursor c = db.query("mytable", null, null, null, null, null, null);
+                List<Bean> beans = beanDAO.readAllBeans();
+                onRefresh(beans);
 
-                // ставим позицию курсора на первую строку выборки
-                // если в выборке нет строк, вернется false
-                if (c.moveToFirst()) {
-
-                    // определяем номера столбцов по имени в выборке
-                    int idColIndex = c.getColumnIndex("id");
-                    int nameColIndex = c.getColumnIndex("name");
-                    int emailColIndex = c.getColumnIndex("email");
-
-                    do {
-                        // получаем значения по номерам столбцов и пишем все в лог
-                        Log.d(LOG_TAG,
-                                "ID = " + c.getInt(idColIndex) +
-                                        ", name = " + c.getString(nameColIndex) +
-                                        ", email = " + c.getString(emailColIndex));
-                        // переход на следующую строку
-                        // а если следующей нет (текущая - последняя), то false - выходим из цикла
-                    } while (c.moveToNext());
-                } else
-                    Log.d(LOG_TAG, "0 rows");
-                c.close();
                 break;
             case R.id.btnClear:
                 Log.d(LOG_TAG, "--- Clear mytable: ---");
                 // удаляем все записи
-                int clearCount = db.delete("mytable", null, null);
+                int clearCount = beanDAO.clear();
                 Log.d(LOG_TAG, "deleted rows count = " + clearCount);
                 break;
-        }
-        // закрываем подключение к БД
-        dbHelper.close();
-    }
-
-
-
-    class DBHelper extends SQLiteOpenHelper {
-
-        public DBHelper(Context context) {
-            // конструктор суперкласса
-            super(context, "myDB", null, 1);
-        }
-
-        @Override
-        public void onCreate(SQLiteDatabase db) {
-            Log.d(LOG_TAG, "--- onCreate database ---");
-            // создаем таблицу с полями
-            db.execSQL("create table mytable ("
-                    + "id integer primary key autoincrement,"
-                    + "name text,"
-                    + "email text" + ");");
-        }
-
-        @Override
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+            case R.id.btnUpd:
+                if (id.equalsIgnoreCase("")) {
+                    break;
+                }
+                Log.d(LOG_TAG, "--- Update mytable: ---");
+                int updCount = beanDAO.updateBean(new Bean(name,email), id);
+                Log.d(LOG_TAG, "updated rows count = " + updCount);
+                break;
+            case R.id.btnDel:
+                if (id.equalsIgnoreCase("")) {
+                    break;
+                }
+                Log.d(LOG_TAG, "--- Delete from mytable: ---");
+                // удаляем по id
+                int delCount = beanDAO.delBean(id);
+                Log.d(LOG_TAG, "deleted rows count = " + delCount);
+                break;
         }
     }
+
+    public void onRefresh(List<Bean> beans) {
+        LinearLayout linLayout = findViewById(R.id.linLayout);
+
+        LayoutInflater ltInflater = getLayoutInflater();
+        linLayout.removeAllViews();
+        int[] colors = {Color.parseColor("#559966CC"), Color.parseColor("#55336699")};
+        if(beans == null) return;
+        for (Bean b : beans) {
+            View item = ltInflater.inflate(R.layout.item, linLayout, false);
+            TextView tvName = item.findViewById(R.id.tvName);
+            tvName.setText("Id" + b.getId());
+            TextView tvPosition = item.findViewById(R.id.tvPosition);
+            tvPosition.setText("Name: " + b.getName());
+            TextView tvSalary = item.findViewById(R.id.tvSalary);
+            tvSalary.setText("Email: " + b.getEmail());
+            item.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
+            item.setBackgroundColor(colors[(int) b.getId() % 2]);
+            linLayout.addView(item);
+        }
+    }
+
 }
