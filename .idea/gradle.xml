@@ -15,6 +15,9 @@
             <option value="$PROJECT_DIR$/module05_SeekBar" />
             <option value="$PROJECT_DIR$/module06_onactivityresult" />
             <option value="$PROJECT_DIR$/module07_browser" />
+            <option value="$PROJECT_DIR$/module08_02_sqliteinnerjoin" />
+            <option value="$PROJECT_DIR$/module08_02_sqliteonupgradedb" />
+            <option value="$PROJECT_DIR$/module08_02_sqlitetransactions" />
             <option value="$PROJECT_DIR$/module08_1_sharedpreferences" />
             <option value="$PROJECT_DIR$/module08_2_sqlite" />
             <option value="$PROJECT_DIR$/module09_layoutinflaterlist" />
