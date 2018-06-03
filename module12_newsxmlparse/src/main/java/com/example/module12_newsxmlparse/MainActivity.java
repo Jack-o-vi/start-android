@@ -132,8 +132,6 @@ public class MainActivity extends AppCompatActivity {
             xmlStream = downloadXML(url);
 
             items = createNewsItemsFromXml(xmlStream);
-
-
             return items;
         }
 
